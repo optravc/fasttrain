@@ -1,0 +1,27 @@
+[
+    {
+      "title": "สายสีเขียวและสายสีทอง",
+      "website": "https://www.bts.co.th",
+      "facebook": "https://www.facebook.com/BTSSkyTrain?locale=th_TH",
+      "twitter": "https://twitter.com/BTS_SkyTrain",
+      "line": "https://line.me/R/ti/p/%40btsskytrain",
+      "color": "green"
+    },
+    {
+      "title": "สายสีเหลือง",
+      "website": "https://www.ebm.co.th",
+      "facebook": "https://www.facebook.com/MRTYellowLine?locale=th_TH",
+      "twitter": "https://twitter.com/YellowLine_ebm",
+      "line": "https://line.me/R/ti/p/%40YellowLine_ebm",
+      "color": "yellow"
+    },
+    {
+      "title": "สายสีชมพู",
+      "website": "https://www.nbm.co.th",
+      "facebook": "https://www.facebook.com/MRTPinkLine?locale=th_TH",
+      "twitter": "https://twitter.com/MRTPinkLine",
+      "line": "https://line.me/R/ti/p/%40PinkYellowLineOfficial",
+      "color": "pink"
+    }
+  ]
+  

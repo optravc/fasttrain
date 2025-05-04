@@ -1,0 +1,74 @@
+{
+    "Sukhumvit Line": {
+      "stations": [
+        {
+          "name": "คูคต",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@N24_EB-2000x1336.png"
+        },
+        {
+          "name": "แยก คปอ.",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@N23_EB-2000x1336.png"
+        },
+        {
+          "name": "พิพิธภัณฑ์กองทัพอากาศ",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@N22_EB-2000x1336.png"
+        },
+        {
+          "name": "โรงพยาบาลภูมิพลอดุลยเดช",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@N21_EB-2000x1336.png"
+        },
+        {
+          "name": "สะพานใหม่",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@N20_EB-2000x1336.png"
+        },
+        {
+          "name": "สายหยุด",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@N19_EB-2000x1336.png"
+        },
+        {
+          "name": "พหลโยธิน 59",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@N18_EB-2000x1336.png"
+        },
+        {
+          "name": "รัชดาภิเษก",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@N17_EB-2000x1336.png"
+        },
+        {
+          "name": "เอกมัย",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E7_EB-2000x1336.png"
+        },
+        {
+          "name": "ทองหล่อ",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E6_EB-2000x1336.png"
+        },
+        {
+          "name": "พระโขนง",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E8_EB-2000x1336.png"
+        },
+        {
+          "name": "อ่อนนุช",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E9_EB-2000x1336.png"
+        },
+        {
+          "name": "บางจาก",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E10_EB-2000x1336.png"
+        },
+        {
+          "name": "ปุณณวิถี",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E11_EB-2000x1336.png"
+        },
+        {
+          "name": "อุดมสุข",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E12_EB-2000x1336.png"
+        },
+        {
+          "name": "บางนา",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E13_EB-2000x1336.png"
+        },
+        {
+          "name": "สนามบินสุวรรณภูมิ",
+          "map": "https://btsapp1.bts.co.th/WebApplication/WareHouse/AreaMap/151263134654AW_StationAreamapWebsite@E14_EB-2000x1336.png"
+        }
+      ]
+    }
+  }
