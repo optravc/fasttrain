@@ -10,36 +10,38 @@ class Servicedetails extends StatefulWidget {
   const Servicedetails({super.key, required this.selectedLine});
 
   @override
-  _MapPageState createState() => _MapPageState();
+  _ServicedetailsState createState() => _ServicedetailsState();
 }
 
-class _MapPageState extends State<Servicedetails> {
+class _ServicedetailsState extends State<Servicedetails> {
   String? selectedStartStation;
   String? selectedEndStation;
   double price = 0.0;
   Map<String, dynamic>? data;
 
-  // 👇 เปลี่ยน URL ตามที่ใช้งาน
   final String apiUrl = apiBaseUrl;
-Future<void> loadData() async {
-  try {
-    print('📡 เรียก URL: $apiUrl');
-    final response = await http.get(Uri.parse(apiUrl));
-    print('📦 status: ${response.statusCode}');
-    print('📄 body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final decoded = json.decode(response.body);
-      setState(() {
-        data = decoded;
-      });
-    } else {
-      throw Exception('โหลดข้อมูลไม่สำเร็จ');
+  Future<void> loadData() async {
+    try {
+      final fullUrl = '$apiUrl/stations';
+      print('📡 เรียก URL: $fullUrl');
+
+      final response = await http.get(Uri.parse(fullUrl));
+      print('📦 status: ${response.statusCode}');
+      print('📄 body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        setState(() {
+          data = decoded;
+        });
+      } else {
+        throw Exception('โหลดข้อมูลไม่สำเร็จ');
+      }
+    } catch (e) {
+      debugPrint('❌ error: $e');
     }
-  } catch (e) {
-    debugPrint('❌ error: $e');
   }
-}
 
   @override
   void initState() {
