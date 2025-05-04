@@ -19,11 +19,11 @@ class _ServicedetailsState extends State<Servicedetails> {
   double price = 0.0;
   Map<String, dynamic>? data;
 
-  final String apiUrl = apiBaseUrl;
+  final String baseUrl = apiUrl;
 
   Future<void> loadData() async {
     try {
-      final fullUrl = '$apiUrl/stations';
+     final fullUrl = '$baseUrl/api/stations';
       print('📡 เรียก URL: $fullUrl');
 
       final response = await http.get(Uri.parse(fullUrl));
@@ -59,7 +59,7 @@ class _ServicedetailsState extends State<Servicedetails> {
 
     final lineData = data![widget.selectedLine];
     final stations = List<String>.from(lineData['stations']);
-    final mapUrl = lineData['submap'];
+    final mapUrl = lineData['map_url']; // ✅ ต้องใช้ map_url (ไม่ใช่ submap)
 
     return Scaffold(
       appBar: AppBar(title: Text('สาย: ${widget.selectedLine}')),
@@ -80,7 +80,12 @@ class _ServicedetailsState extends State<Servicedetails> {
                       setState(() {
                         selectedStartStation = value;
                         if (selectedEndStation != null) {
-                          price = calculatePrice(stations, selectedStartStation!, selectedEndStation!, widget.selectedLine);
+                          price = calculatePrice(
+                            stations,
+                            selectedStartStation!,
+                            selectedEndStation!,
+                            widget.selectedLine,
+                          );
                         }
                       });
                     },
@@ -100,7 +105,12 @@ class _ServicedetailsState extends State<Servicedetails> {
                       setState(() {
                         selectedEndStation = value;
                         if (selectedStartStation != null) {
-                          price = calculatePrice(stations, selectedStartStation!, selectedEndStation!, widget.selectedLine);
+                          price = calculatePrice(
+                            stations,
+                            selectedStartStation!,
+                            selectedEndStation!,
+                            widget.selectedLine,
+                          );
                         }
                       });
                     },
@@ -114,7 +124,8 @@ class _ServicedetailsState extends State<Servicedetails> {
                   const SizedBox(height: 20),
                   Text(
                     'ราคาตั๋ว: ฿${price.toStringAsFixed(2)}',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

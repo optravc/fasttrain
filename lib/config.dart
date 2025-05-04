@@ -1,6 +1,6 @@
-const bool useNgrok = true;
+const bool useProductionApi = true;
 
-const String ngrokUrl = 'https://trainfast-pqxrpm...vercel.app/api/stations';
-const String localUrl = 'http://localhost:5000';
+const String productionUrl = 'https://trainfast-omega.vercel.app';
+const String localUrl = 'http://localhost:5000/api';
 
-String get apiBaseUrl => useNgrok ? ngrokUrl : localUrl;
+String get apiUrl => useProductionApi ? productionUrl : localUrl;

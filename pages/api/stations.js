@@ -6,10 +6,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const connection = await mysql.createConnection(process.env.DATABASE_URL);
+    const connection = await mysql.createConnection({
+      uri: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: true
+      }
+    });
 
     const [rows] = await connection.execute('SELECT * FROM Stations');
-
     await connection.end();
 
     res.status(200).json({
