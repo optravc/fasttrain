@@ -1,6 +1,9 @@
 import mysql from 'mysql2/promise';
+import Cors from 'micro-cors';
 
-export default async function handler(req, res) {
+const cors = Cors(); // หรือใส่ options ได้ เช่น Cors({ origin: 'https://yourdomain.com' })
+
+async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -27,3 +30,6 @@ export default async function handler(req, res) {
     res.status(500).json({ error: 'Internal Server Error', detail: error.message });
   }
 }
+
+// ✅ Export ผ่าน micro-cors
+export default cors(handler);
