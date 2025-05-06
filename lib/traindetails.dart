@@ -36,8 +36,7 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
         final data = json.decode(response.body);
         final List<dynamic> lineStations = data[widget.line]['stations'];
         setState(() {
-          stations =
-              lineStations.map<String>((s) => s['name'] as String).toList();
+          stations = lineStations.map<String>((s) => s['name'] as String).toList();
           isLoading = false;
         });
       } else {
@@ -45,21 +44,72 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
       }
     } catch (e) {
       debugPrint('❌ Error loading stations: $e');
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
 
-  Future<void> payAndShowQR() async {
-    final url = Uri.parse('$apiUrl/payment');
-    final ref = DateTime.now().millisecondsSinceEpoch.toString();
+  void showQRPopup() {
+    final ref = '${widget.line}-${DateTime.now().millisecondsSinceEpoch}';
+    final qrText = 'https://mock-qr.fasttrain.com/checkout/$ref';
 
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('QR ชำระเงิน'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("สแกน QR เพื่อชำระเงิน"),
+              const SizedBox(height: 8),
+              Text('$startStation → $endStation',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 4),
+              Text('ยอดที่ต้องชำระ: ${price.toStringAsFixed(2)} บาท',
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: 200,
+                height: 200,
+                child: QrImageView(
+                  data: qrText,
+                  size: 200,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  confirmPayment(qrText);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+                child: const Text('ยืนยันชำระเงิน'),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('ปิด'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> confirmPayment(String qrText) async {
+    final url = Uri.parse('$apiUrl/payment');
     final body = {
       "line": widget.line,
       "startStation": startStation,
       "endStation": endStation,
       "price": price.toString(),
+      "qrText": qrText,
     };
 
     try {
@@ -70,66 +120,11 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final qrText = data['qrText'];
-
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('QR ชำระเงิน'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text("สแกน QR เพื่อชำระเงิน"),
-                  const SizedBox(height: 8),
-                  Text(
-                    '$startStation → $endStation',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'ยอดที่ต้องชำระ: ${price.toStringAsFixed(2)} บาท',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: QrImageView(
-                      data: qrText,
-                      size: 200,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('✅ ชำระเงินสำเร็จ')),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                    child: const Text('ยืนยันชำระเงิน'),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('ปิด'),
-              ),
-            ],
-          ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('✅ ชำระเงินสำเร็จ')),
         );
       } else {
-        throw Exception('ไม่สามารถสร้าง QR ได้');
+        throw Exception('บันทึกตั๋วล้มเหลว');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -169,8 +164,7 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                   children: [
                     Container(width: 6, height: 20, color: Colors.green),
                     const SizedBox(width: 8),
-                    const Text('เลือกสถานี',
-                        style: TextStyle(color: Colors.white)),
+                    const Text('เลือกสถานี', style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -214,12 +208,14 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
               ),
               if (priceMessage != null) ...[
                 const SizedBox(height: 12),
-                Text(priceMessage!,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 14)),
+                Text(
+                  priceMessage!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14),
+                ),
                 const SizedBox(height: 12),
                 ElevatedButton(
-                  onPressed: payAndShowQR,
+                  onPressed: showQRPopup,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     minimumSize: const Size(double.infinity, 40),

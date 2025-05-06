@@ -58,10 +58,52 @@ class _AdminAddLinePageState extends State<AdminAddLinePage> {
     }
   }
 
+  Future<void> _deleteStation() async {
+    if (selectedLine == null || name.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('❗ กรุณาเลือกสายและกรอกชื่อสถานี')),
+      );
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/delete'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'line': selectedLine,
+          'name': name.text.trim(),
+        }),
+      );
+
+      setState(() => _loading = false);
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('🗑 ลบสถานีเรียบร้อย')),
+        );
+        name.clear();
+        mapUrl.clear();
+        setState(() => selectedLine = null);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ ลบไม่สำเร็จ: ${response.body}')),
+        );
+      }
+    } catch (e) {
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ เชื่อมต่อไม่ได้: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('เพิ่มสถานีรถไฟ'), backgroundColor: Colors.blue),
+      appBar: AppBar(title: const Text('เพิ่ม/ลบสถานีรถไฟ'), backgroundColor: Colors.blue),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
@@ -92,13 +134,26 @@ class _AdminAddLinePageState extends State<AdminAddLinePage> {
               const SizedBox(height: 30),
               _loading
                   ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        minimumSize: const Size(double.infinity, 40),
-                      ),
-                      child: const Text('เพิ่มสถานี'),
+                  : Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            minimumSize: const Size(double.infinity, 40),
+                          ),
+                          child: const Text('✅ เพิ่มสถานี'),
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: _deleteStation,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            minimumSize: const Size(double.infinity, 40),
+                          ),
+                          child: const Text('🗑 ลบสถานีนี้'),
+                        ),
+                      ],
                     ),
             ],
           ),
