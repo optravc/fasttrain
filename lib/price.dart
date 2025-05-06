@@ -1,79 +1,63 @@
-double calculatePrice(List<String> stations, String startStation, String endStation, String selectedLine) {
-  // หาตำแหน่งของสถานีต้นทางและปลายทางใน List
+Map<String, dynamic> calculatePrice(
+  List<String> stations,
+  String startStation,
+  String endStation,
+  String selectedLine,
+) {
   int startIndex = stations.indexOf(startStation);
   int endIndex = stations.indexOf(endStation);
 
-  // ตรวจสอบว่าผู้ใช้เลือกสถานีต้นทางและปลายทางที่ถูกต้องหรือไม่
   if (startIndex == -1 || endIndex == -1) {
-    return 0.0;  // คืนค่า 0 หากไม่พบสถานี
+    return {
+      'price': 0.0,
+      'message': 'ไม่พบสถานีที่เลือก'
+    };
   }
 
-  // คำนวณจำนวนสถานีที่เดินทาง
   int numStations = (endIndex - startIndex).abs();
 
-  // กำหนดราคาเริ่มต้นและอัตราค่าธรรมเนียมเพิ่มขึ้นตามแต่ละสาย
-  double basePrice;
-  double priceIncrement;
-  double maxPrice;
+  double total = 0.0;
+  String explanation = '';
 
-  switch (selectedLine) {
-    case 'Sukhumvit Line':
-      basePrice = 17.0; 
-      priceIncrement = 7.0; 
-      maxPrice = 62.0;  
-      break;
-    case 'Silom Line':
-      basePrice = 16.0; 
-      priceIncrement = 4.0;  
-      maxPrice = 59.0;  
-      break;
-    case 'Gold Line':
-      basePrice = 16.0;  
-      priceIncrement = 4.0;  
-      maxPrice = 16.0;  
-      break;
-    case 'Yellow Line':
-      basePrice = 15.0;  
-      priceIncrement = 4.0;  
-      maxPrice = 45.0;  
-      if (numStations > 3) {
-        priceIncrement = 3.0; 
-      }
-      break;
-    case 'Pink Line':
-      basePrice = 15.0;  
-      priceIncrement = 3.0; 
-
-      if (numStations > 3) {
-        priceIncrement = 4.0; 
-      } 
-        if (numStations > 4) {
-        priceIncrement = 5.0; 
-      } 
-       if (numStations > 5) {
-        priceIncrement = 7.0; 
-      } 
-        if (numStations > 10) {
-        priceIncrement =2.0; 
-      } 
-
-      maxPrice = 45.0;  
-      break;
-      
-    default:
-      basePrice = 20.0;  
-      priceIncrement = 10.0; 
-      maxPrice = 50.0;  
-      break;
+  if (selectedLine == 'Sukhumvit Line') {
+    if (numStations == 1) total = 16;
+    else if (numStations == 2) total = 23;
+    else if (numStations == 3) total = 26;
+    else if (numStations == 4) total = 30;
+    else if (numStations == 5) total = 33;
+    else if (numStations == 6) total = 37;
+    else if (numStations == 7) total = 40;
+    else if (numStations >= 8 && numStations <= 15) total = 44;
+    else if (numStations >= 16) total = 59;
+    explanation = 'เดินทาง $numStations สถานี สายสุขุมวิท = ${total.toStringAsFixed(2)} บาท';
   }
 
- 
-  double price = basePrice + (numStations * priceIncrement);
-
-  // ตรวจสอบว่าไม่ให้ราคามากกว่าราคาสูงสุด
-  if (price > maxPrice) {
-    price = maxPrice;
+  else if (selectedLine == 'Silom Line') {
+    if (numStations > 15) {
+      total = 59.0;
+      explanation = 'เหมาจ่ายสำหรับระยะทางเกิน 15 สถานี: 59 บาท';
+    } else {
+      double basePrice = 16.0;
+      double priceIncrement = 3.5;
+      total = basePrice + (numStations * priceIncrement);
+      explanation = '$basePrice + ($numStations x $priceIncrement) = ${total.toStringAsFixed(2)}';
+    }
   }
 
-  return price;
+  else if (selectedLine == 'Gold Line') {
+    total = 15.0;
+    explanation = 'ค่าโดยสารสายสีทอง เหมาจ่าย 15 บาทตลอดสาย';
+  }
+
+  else {
+    return {
+      'price': 0.0,
+      'message': 'ยังไม่รองรับสายนี้'
+    };
+  }
+
+  return {
+    'price': total,
+    'message': explanation
+  };
 }

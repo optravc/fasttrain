@@ -15,8 +15,6 @@ class _ServicePageState extends State<ServicePage> {
     'Sukhumvit Line',
     'Silom Line',
     'Gold Line',
-    'Yellow Line',
-    'Pink Line',
   ];
 
   @override

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'price.dart';
 import 'config.dart';
 
 class Servicedetails extends StatefulWidget {
@@ -10,56 +9,59 @@ class Servicedetails extends StatefulWidget {
   const Servicedetails({super.key, required this.selectedLine});
 
   @override
-  _ServicedetailsState createState() => _ServicedetailsState();
+  State<Servicedetails> createState() => _ServicedetailsState();
 }
 
 class _ServicedetailsState extends State<Servicedetails> {
   String? selectedStartStation;
-  String? selectedEndStation;
-  double price = 0.0;
-  Map<String, dynamic>? data;
+  List<Map<String, dynamic>> stations = [];
 
-  final String baseUrl = apiUrl;
+  // โหลดข้อมูลจาก API
+Future<void> fetchStations() async {
+  final url = Uri.parse('$apiUrl/stations');
+  try {
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
 
-  Future<void> loadData() async {
-    try {
-     final fullUrl = '$baseUrl/api/stations';
-      print('📡 เรียก URL: $fullUrl');
-
-      final response = await http.get(Uri.parse(fullUrl));
-      print('📦 status: ${response.statusCode}');
-      print('📄 body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final decoded = json.decode(response.body);
-        setState(() {
-          data = decoded;
-        });
-      } else {
-        throw Exception('โหลดข้อมูลไม่สำเร็จ');
+      // ✅ ป้องกัน key ไม่ตรง (เช่น null)
+      if (!data.containsKey(widget.selectedLine)) {
+        throw Exception('ไม่พบข้อมูลสาย: ${widget.selectedLine}');
       }
-    } catch (e) {
-      debugPrint('❌ error: $e');
+
+      final lineData = data[widget.selectedLine];
+      setState(() {
+        stations = List<Map<String, dynamic>>.from(lineData['stations']);
+      });
+    } else {
+      throw Exception('โหลดข้อมูลไม่สำเร็จจาก API');
     }
+  } catch (e) {
+    debugPrint('❌ โหลดข้อมูลจาก API ไม่สำเร็จ: $e');
   }
+}
+
 
   @override
   void initState() {
     super.initState();
-    loadData();
+    fetchStations();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (data == null) {
+    if (stations.isEmpty) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    final lineData = data![widget.selectedLine];
-    final stations = List<String>.from(lineData['stations']);
-    final mapUrl = lineData['map_url']; // ✅ ต้องใช้ map_url (ไม่ใช่ submap)
+    final mapUrl = selectedStartStation != null
+        ? stations.firstWhere(
+            (s) => s['name'] == selectedStartStation,
+            orElse: () => {'map_url': null},
+          )['map_url']
+        : null;
 
     return Scaffold(
       appBar: AppBar(title: Text('สาย: ${widget.selectedLine}')),
@@ -73,59 +75,20 @@ class _ServicedetailsState extends State<Servicedetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DropdownButton<String>(
+                    isExpanded: true,
                     hint: const Text('เลือกสถานีต้นทาง'),
                     value: selectedStartStation,
-                    isExpanded: true,
-                    onChanged: (value) {
+                    onChanged: (val) {
                       setState(() {
-                        selectedStartStation = value;
-                        if (selectedEndStation != null) {
-                          price = calculatePrice(
-                            stations,
-                            selectedStartStation!,
-                            selectedEndStation!,
-                            widget.selectedLine,
-                          );
-                        }
+                        selectedStartStation = val;
                       });
                     },
-                    items: stations.map((station) {
+                    items: stations.map<DropdownMenuItem<String>>((station) {
                       return DropdownMenuItem<String>(
-                        value: station,
-                        child: Text(station),
+                        value: station['name'],
+                        child: Text(station['name']),
                       );
                     }).toList(),
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButton<String>(
-                    hint: const Text('เลือกสถานีปลายทาง'),
-                    value: selectedEndStation,
-                    isExpanded: true,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedEndStation = value;
-                        if (selectedStartStation != null) {
-                          price = calculatePrice(
-                            stations,
-                            selectedStartStation!,
-                            selectedEndStation!,
-                            widget.selectedLine,
-                          );
-                        }
-                      });
-                    },
-                    items: stations.map((station) {
-                      return DropdownMenuItem<String>(
-                        value: station,
-                        child: Text(station),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'ราคาตั๋ว: ฿${price.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
